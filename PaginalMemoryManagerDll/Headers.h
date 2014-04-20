@@ -3,7 +3,7 @@
 
 typedef char* VirtualAdress;
 
-typedef char* PhysiclAdress;
+typedef char* PhysicalAdress;
 
 typedef  unsigned short  Bool;
 
@@ -17,7 +17,7 @@ typedef struct {
 	
 	Bool isModefied;
 	
-	PhysiclAdress physiclAddress;
+	PhysicalAdress physicalAddress;
 
 } Page;
 
@@ -42,7 +42,13 @@ typedef struct {
 
 	Page * pages;
 
+	PhysicalAdress physicalMemoryBegin;
+
 	MemoryBlock firstMemoryBlock;
+
+	size_t numberOfPages;
+
+	size_t sizeOfPage;
 
 } MemoryManager; 
 

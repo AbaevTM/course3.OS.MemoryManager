@@ -87,4 +87,4 @@ EXTERN  int _write (VirtualAddres ptr, void* pBuffer, size_t szBuffer);
 	@retval	-1	неверные параметры
 	@retval	1	неизвестная ошибка
  **/
-EXTERN  int _init (int n, int szPage);
+EXTERN  int _init (size_t n, size_t szPage);
