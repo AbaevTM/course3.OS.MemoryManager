@@ -3,6 +3,7 @@
 
 #include "PaginalMemoryManagerDll.h"
 #include <stdlib.h>
+#include <math.h>
 
  static  MemoryManager memoryManager;
 
@@ -23,13 +24,30 @@
 	 return 1;
  }
 
+ static int getAddressOffset( size_t numberOfPages ){
+	/*size_t mask = 1073741824;
+	unsigned short addressOffset = 0;
+	printf("Mask %d\n", mask);
+	printf("NumberOfpages %d\n", numberOfPages);
+	for ( addressOffset = 0; addressOffset < 32; addressOffset += 1){
+		if ( numberOfPages & mask == mask ){
+			memoryManager.addressOffset = 32 - addressOffset;
+			printf("%d\n", 32 - addressOffset);
+			return 0;
+		}
+		numberOfPages << 1;
+	}*/
+	return 1;
+ }
+
  static int _pagesInit(size_t numberOfPages, size_t pageSize){
 	 PhysicalAdress eachPageOffset;
 	 size_t index;
 	 memoryManager.physicalMemoryBegin = (PhysicalAdress) calloc(numberOfPages * pageSize , sizeof(char));
 	 memoryManager.pages = (Page*) calloc ( numberOfPages , sizeof(Page));
 	  if(memoryManager.physicalMemoryBegin == NULL ||
-		  memoryManager.pages == NULL
+		  memoryManager.pages == NULL ||
+		  getAddressOffset( numberOfPages) != 0
 		  ){
 		 return 1;
 	 }
@@ -44,8 +62,15 @@
  }
 
  static int _memoryBlocksInit(size_t numberOfPages, size_t pageSize){
-	// Проинициализировать блоки памяти. Страницы, память физическая, файл уже проинициализированы.
-	// Начало физической памяти есть у менеджера.
+	 memoryManager.firstMemoryBlock = (MemoryBlock *) malloc(sizeof(MemoryBlock));
+	 if(memoryManager.firstMemoryBlock == NULL){
+		return 1;
+	 }
+	memoryManager.firstMemoryBlock->blockAdress = NULL;
+	memoryManager.firstMemoryBlock->blockSize = numberOfPages*pageSize;
+	memoryManager.firstMemoryBlock->isFree = true;
+	memoryManager.firstMemoryBlock->next = NULL;
+	memoryManager.firstMemoryBlock->previous = NULL;
 	return 0;
  }
 

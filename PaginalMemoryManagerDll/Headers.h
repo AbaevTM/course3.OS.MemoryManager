@@ -44,11 +44,13 @@ typedef struct {
 
 	PhysicalAdress physicalMemoryBegin;
 
-	MemoryBlock firstMemoryBlock;
+	MemoryBlock * firstMemoryBlock;
 
 	size_t numberOfPages;
 
 	size_t sizeOfPage;
+
+	unsigned short addressOffset;
 
 } MemoryManager; 
 
