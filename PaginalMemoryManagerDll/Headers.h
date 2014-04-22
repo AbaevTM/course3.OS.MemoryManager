@@ -1,5 +1,11 @@
 
 #include <stdio.h>
+#ifdef C_PLUS_PLUS 
+#define EXTERN extern "C"
+#else
+#define EXTERN extern
+#endif
+
 
 typedef char* VirtualAddress;
 
@@ -83,6 +89,8 @@ typedef struct {
 
 } MemoryManager; 
 
+
+  MemoryManager memoryManager;
 /*
 
 int _read (VA ptr, void* pBuffer, size_t szBuffer);

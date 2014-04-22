@@ -5,12 +5,6 @@
 
  ************************************************************************/
 
-#ifdef C_PLUS_PLUS 
-#define EXTERN extern "C"
-#else
-#define EXTERN extern
-#endif
-
 #include "Headers.h"
 /**
  	@func	_malloc	
