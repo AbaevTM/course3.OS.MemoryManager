@@ -68,6 +68,10 @@ typedef struct {
 	1|0
 	1|1
 
+	1 sign + addressOffset + addressBytes  = 32
+	01000000 00000000 00000000 00000000
+
+
 	00000000 00000000 00000000 00000010
 	^								^
 	|-----------------addressOffset|
