@@ -117,7 +117,7 @@ int _malloc (VirtualAddres ptr, size_t szBlock){
 	}
 	newBlock = (MemoryBlock *)malloc(sizeof(MemoryBlock));
 	adress = freeBlock->blockAdress;
-	freeBlock->blockAdress = (VirtualAddres)newBlock;
+	freeBlock->blockAdress = adress + szBlock;
 	freeBlock->blockSize = freeBlock->blockSize - szBlock;
 	newBlock->blockAdress = adress;
 	newBlock->blockSize = szBlock;
@@ -128,8 +128,10 @@ int _malloc (VirtualAddres ptr, size_t szBlock){
 		newBlock->previous = NULL;
 		memoryManager.firstMemoryBlock = newBlock;
 	}
-	switchBlocks(freeBlock, newBlock);
-	ptr = (VirtualAddres)newBlock;
+	else{
+		switchBlocks(freeBlock, newBlock);
+	}
+	ptr = adress + szBlock;
 	return 0;
 }
 
