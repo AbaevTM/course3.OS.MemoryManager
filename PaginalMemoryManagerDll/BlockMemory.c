@@ -15,7 +15,9 @@
  }
 
  static void switchBlocks(MemoryBlock *freeBlock, MemoryBlock * newBlock){
-	freeBlock->previous->next = newBlock;
+	if(freeBlock->previous != NULL){
+		freeBlock->previous->next = newBlock;
+	}
 	newBlock->previous = freeBlock->previous;
 	newBlock->next = freeBlock;
 	freeBlock->previous = newBlock;
@@ -30,9 +32,19 @@
 	 }
 	 return NULL;
  }
+ 
+ static void freeBlockUnion(MemoryBlock * block1, MemoryBlock * block2){
+	block1->blockSize = block1->blockSize + block2->blockSize;
+	block1->isFree = true;
+	block1->next = block2->next;
+	if(block2->next != NULL){
+		block2->next->previous = block1;
+	}
+	free(block2);
+}
 
 // Ёкспортируемые функции
-int _malloc (VirtualAddress ptr, size_t szBlock){
+int _malloc (VirtualAddress * ptr, size_t szBlock){
 	MemoryBlock * freeBlock;
 	MemoryBlock * newBlock;
 	VirtualAddress adress;
@@ -60,7 +72,7 @@ int _malloc (VirtualAddress ptr, size_t szBlock){
 	else{
 		switchBlocks(freeBlock, newBlock);
 	}
-	ptr = adress;
+	*ptr = adress;
 	return 0;
 }
 
@@ -69,11 +81,25 @@ int _malloc (VirtualAddress ptr, size_t szBlock){
 	MemoryBlock * deletedBlock;
 	MemoryBlock *temp;
 	printf("free\n");
-	/*deletedBlock = getBlock(ptr);
-	if(!deletedBlock){
+	deletedBlock = getBlock(ptr);		
+	if(!deletedBlock || deletedBlock->isFree){
 		return -1;	 
 	}
-	//if dissmised block is first and next one is not free
+
+	if(deletedBlock->next != NULL && deletedBlock->next->isFree){
+		freeBlockUnion(deletedBlock, deletedBlock->next);
+	}
+	if(deletedBlock->previous != NULL && deletedBlock->previous->isFree){
+		freeBlockUnion(deletedBlock->previous, deletedBlock);
+	}
+	else{
+		deletedBlock->isFree = true;
+	}
+	/*if(!deletedBlock->next && !deletedBlock->previous){
+		deletedBlock->isFree = true;
+		return 0;
+	}
+	//if deleted block is first and next one is not free
 	if(deletedBlock->previous == NULL && !deletedBlock->next->isFree){
 		deletedBlock->isFree = true;
 		return 0;
@@ -88,12 +114,37 @@ int _malloc (VirtualAddress ptr, size_t szBlock){
 		free(deletedBlock);
 		return 0;
 	}
+	// -//- is last and the previous one is not free 
+	if(deletedBlock->next == NULL && !deletedBlock->previous->isFree){
+		deletedBlock->isFree = true;
+		return 0;
+	}
+	// -//- is last and the previous one is free 
+	if(deletedBlock->next == NULL && deletedBlock->previous->isFree){
+		temp = deletedBlock->previous;
+		temp->blockSize = temp->blockSize + deletedBlock->blockSize;
+		temp->next = NULL;
+		free(deletedBlock);
+		return 0;
+	}
 	// -//- is not first and next one is free and previous one is not
 	if(deletedBlock->next->isFree && !deletedBlock->previous->isFree){
-		temp = deletedBlock->next;
-		temp->blockSize = temp->blockSize + deletedBlock->blockSize;
-		temp->blockAdress = deletedBlock->blockAdress;
-		temp->previous = deletedBlock->previous;
+		freeBlockUnion(deletedBlock, deletedBlock->next);
+	}
+	// -//- is not first and next one is not free and previous one is;
+	if(!deletedBlock->next->isFree && deletedBlock->previous->isFree){
+		freeBlockUnion(deletedBlock->previous, deletedBlock);
+		return 0;
+	}
+	// -//- is not first and next and previous blocks are free;
+	if(deletedBlock->next->isFree && deletedBlock->previous->isFree){
+		freeBlockUnion(deletedBlock, deletedBlock->next);
+		freeBlockUnion(deletedBlock->previous, deletedBlock);
+		return 0;
+	}
+	if(!deletedBlock->next->isFree && !deletedBlock->previous->isFree){
+		deletedBlock->isFree = true;
+		return 0;
 	}*/
 	return 0;
 }
@@ -104,6 +155,17 @@ int _malloc (VirtualAddress ptr, size_t szBlock){
 }
 
  int _write (VirtualAddress ptr, void* pBuffer, size_t szBuffer){
+	MemoryBlock * writableBlock = getBlock(ptr);
 	printf("write\n");
-	return 0;
+	if(pBuffer == NULL || szBuffer == 0){
+		return -1;
+	}
+	if(!writableBlock || writableBlock->blockSize < szBuffer){
+		return -2;
+	} 
+	else{
+		
+		return 0;
+	}
+	return 1;
 }
