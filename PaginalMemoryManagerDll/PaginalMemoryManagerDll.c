@@ -1,16 +1,18 @@
 // PaginalMemoryManagerDll.cpp: определяет экспортированные функции для приложения DLL.
 //
 
-#include "PaginalMemoryManagerDll.h"
+#include "mmemory.h"
 #include <stdlib.h>
-#include <math.h>
 
  static  MemoryManager memoryManager;
 
   // Cтатические функции
 
+ /////
+ ///// PAGINAL MEMORY
+ /////
  static int _fileInit( size_t n, size_t szPage ){
-	 VirtualAddres buffer = (VirtualAddres) calloc( n*szPage, sizeof(char));
+	 VirtualAddress buffer = (VirtualAddress) calloc( n*szPage, sizeof(char));
 	 if( fopen_s( &(memoryManager.pageFile), "pageFile", "wb") == 0 &&
 		 buffer != NULL){
 			 if ( fwrite(buffer, sizeof(char), n*szPage, memoryManager.pageFile) == n*szPage){
@@ -18,13 +20,14 @@
 			fseek( memoryManager.pageFile , 0, SEEK_SET);
 			memoryManager.numberOfPages = n;
 			memoryManager.sizeOfPage = szPage;
+			memoryManager.virtualAddressSize = n*szPage;
 			return 0;
 		}
 	 }
 	 return 1;
  }
 
- static int getAddressOffset( size_t numberOfPages ){
+ static int setOffsets(){
 	/*size_t mask = 1073741824;
 	unsigned short addressOffset = 0;
 	printf("Mask %d\n", mask);
@@ -41,13 +44,13 @@
  }
 
  static int _pagesInit(size_t numberOfPages, size_t pageSize){
-	 PhysicalAdress eachPageOffset;
+	 PhysicalAddress eachPageOffset;
 	 size_t index;
-	 memoryManager.physicalMemoryBegin = (PhysicalAdress) calloc(numberOfPages * pageSize , sizeof(char));
+	 memoryManager.physicalMemoryBegin = (PhysicalAddress) calloc(numberOfPages * pageSize , sizeof(char));
 	 memoryManager.pages = (Page*) calloc ( numberOfPages , sizeof(Page));
 	  if(memoryManager.physicalMemoryBegin == NULL ||
 		  memoryManager.pages == NULL ||
-		  getAddressOffset( numberOfPages) != 0
+		  setOffsets() != 0
 		  ){
 		 return 1;
 	 }
@@ -74,6 +77,10 @@
 	return 0;
  }
 
+ /////
+ ///// BLOCK MEMORY
+ /////
+
  static MemoryBlock * findFreeBlock(size_t size){
 	 MemoryBlock *iterator = memoryManager.firstMemoryBlock; 	
 	 while(iterator != NULL){
@@ -91,7 +98,7 @@
 	freeBlock->previous = newBlock;
  }
 
- static MemoryBlock * getBlock(VirtualAddres adress){
+ static MemoryBlock * getBlock(VirtualAddress adress){
 	 MemoryBlock *iterator = memoryManager.firstMemoryBlock;
 	 while(iterator != NULL){
 		 if(iterator->blockAdress == adress){
@@ -103,10 +110,10 @@
 
 
  // Экспортируемые функции
-int _malloc (VirtualAddres ptr, size_t szBlock){
+int _malloc (VirtualAddress ptr, size_t szBlock){
 	MemoryBlock * freeBlock;
 	MemoryBlock * newBlock;
-	VirtualAddres adress;
+	VirtualAddress adress;
 	printf("malloc\n");
 	if(!szBlock){
 		return -1;
@@ -131,12 +138,12 @@ int _malloc (VirtualAddres ptr, size_t szBlock){
 	else{
 		switchBlocks(freeBlock, newBlock);
 	}
-	ptr = adress + szBlock;
+	ptr = adress;
 	return 0;
 }
 
 
- int _free (VirtualAddres ptr){
+ int _free (VirtualAddress ptr){
 	MemoryBlock * deletedBlock;
 	MemoryBlock *temp;
 	printf("free\n");
@@ -169,12 +176,12 @@ int _malloc (VirtualAddres ptr, size_t szBlock){
 	return 0;
 }
 
- int _read (VirtualAddres ptr, void* pBuffer, size_t szBuffer){
+ int _read (VirtualAddress ptr, void* pBuffer, size_t szBuffer){
 	printf("read\n");
 	return 0;
 }
 
- int _write (VirtualAddres ptr, void* pBuffer, size_t szBuffer){
+ int _write (VirtualAddress ptr, void* pBuffer, size_t szBuffer){
 	printf("write\n");
 	return 0;
 }

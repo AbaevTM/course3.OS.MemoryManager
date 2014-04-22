@@ -1,9 +1,9 @@
 
 #include <stdio.h>
 
-typedef char* VirtualAdress;
+typedef char* VirtualAddress;
 
-typedef char* PhysicalAdress;
+typedef char* PhysicalAddress;
 
 typedef  unsigned short  Bool;
 
@@ -17,7 +17,7 @@ typedef struct {
 	
 	Bool isModefied;
 	
-	PhysicalAdress physicalAddress;
+	PhysicalAddress physicalAddress;
 
 } Page;
 
@@ -31,7 +31,7 @@ struct MemoryBlockS{
 
 	Bool isFree;
 
-	VirtualAdress blockAdress;
+	VirtualAddress blockAdress;
 
 	size_t blockSize;
 };
@@ -42,15 +42,40 @@ typedef struct {
 
 	Page * pages;
 
-	PhysicalAdress physicalMemoryBegin;
+	PhysicalAddress physicalMemoryBegin;
 
 	MemoryBlock * firstMemoryBlock;
+
+	///// PAGINAL MEMORY PROPERTIES
 
 	size_t numberOfPages;
 
 	size_t sizeOfPage;
 
+	unsigned long virtualAddressSize;
+
 	unsigned short addressOffset;
+
+	unsigned short pageAddressOffset;
+
+	/*
+
+	numberOfPages = 2
+	sizeOfPage = 2
+	Addresses:
+	0|0
+	0|1
+	1|0
+	1|1
+
+	00000000 00000000 00000000 00000010
+	^								^
+	|-----------------addressOffset|
+									^^
+									||pageaAddressOffset
+
+	*/
+
 
 } MemoryManager; 
 

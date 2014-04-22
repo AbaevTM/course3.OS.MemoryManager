@@ -5,14 +5,13 @@
 
  ************************************************************************/
 
-typedef char* VirtualAddres;				// Тип описывающий адрес блока 
-
 #ifdef C_PLUS_PLUS 
 #define EXTERN extern "C"
 #else
 #define EXTERN extern
 #endif
 
+#include "Headers.h"
 /**
  	@func	_malloc	
  	@brief	Выделяет блок памяти определенного размера
@@ -26,7 +25,7 @@ typedef char* VirtualAddres;				// Тип описывающий адрес блока
 	@retval	-2	нехватка памяти
 	@retval	1	неизвестная ошибка
  **/
-EXTERN  int _malloc (VirtualAddres ptr, size_t szBlock);
+EXTERN  int _malloc (VirtualAddress ptr, size_t szBlock);
 
 /**
  	@func	_free
@@ -39,7 +38,7 @@ EXTERN  int _malloc (VirtualAddres ptr, size_t szBlock);
 	@retval	-1	неверные параметры
 	@retval	1	неизвестная ошибка
  **/
-EXTERN  int _free (VirtualAddres ptr);
+EXTERN  int _free (VirtualAddress ptr);
 
 /**
  	@func	_read
@@ -55,7 +54,7 @@ EXTERN  int _free (VirtualAddres ptr);
 	@retval	-2	доступ за пределы блока
 	@retval	1	неизвестная ошибка
  **/
-EXTERN  int _read (VirtualAddres ptr, void* pBuffer, size_t szBuffer);
+EXTERN  int _read (VirtualAddress ptr, void* pBuffer, size_t szBuffer);
 
 /**
  	@func	_write
@@ -71,7 +70,7 @@ EXTERN  int _read (VirtualAddres ptr, void* pBuffer, size_t szBuffer);
 	@retval	-2	доступ за пределы блока
 	@retval	1	неизвестная ошибка
  **/
-EXTERN  int _write (VirtualAddres ptr, void* pBuffer, size_t szBuffer);
+EXTERN  int _write (VirtualAddress ptr, void* pBuffer, size_t szBuffer);
 
 /**
  	@func	_init
