@@ -19,7 +19,7 @@
 	@retval	-2	нехватка памяти
 	@retval	1	неизвестная ошибка
  **/
-EXTERN  int _malloc (VirtualAddress ptr, size_t szBlock);
+EXTERN  int _malloc (VirtualAddress * ptr, size_t szBlock);
 
 /**
  	@func	_free
@@ -64,7 +64,7 @@ EXTERN  int _read (VirtualAddress ptr, void* pBuffer, size_t szBuffer);
 	@retval	-2	доступ за пределы блока
 	@retval	1	неизвестная ошибка
  **/
-EXTERN  int _write (VirtualAddress ptr, void* pBuffer, size_t szBuffer);
+EXTERN  int _write (VirtualAddress  ptr, void* pBuffer, size_t szBuffer);
 
 /**
  	@func	_init
