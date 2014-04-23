@@ -66,8 +66,8 @@ int _malloc (VirtualAddress ptr, size_t szBlock){
 
 
  int _free (VirtualAddress ptr){
-	MemoryBlock * deletedBlock;
-	MemoryBlock *temp;
+	//MemoryBlock * deletedBlock;
+	//MemoryBlock *temp;
 	printf("free\n");
 	/*deletedBlock = getBlock(ptr);
 	if(!deletedBlock){
