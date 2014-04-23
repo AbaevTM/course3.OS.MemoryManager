@@ -50,20 +50,24 @@ static size_t findNextPageToBeReplaced(){
 
 static int loadVirtualPageToPhysicalMemory( size_t virtualPageIndex, PhysicalAddress physicalAddress ){
 	size_t index;
+	size_t readBytes =0;
 	size_t sizeOfPage = memoryManager.sizeOfPage;
 	size_t fileShift = sizeOfPage * virtualPageIndex;
 	PhysicalAddress pagePhysicalAddress = physicalAddress;
 	PhysicalAddress buffer = (PhysicalAddress) malloc( sizeOfPage );
+	PhysicalAddress leftPointer = buffer;
 	if( !buffer ){
 		return 1;
 	}
 	fseek(memoryManager.pageFile,fileShift,SEEK_CUR);
-	if ( fread_s(buffer,
+	readBytes = fread_s(buffer,
 		sizeOfPage,
 		sizeof(char),
 		sizeOfPage,
 		memoryManager.pageFile
-		) != sizeOfPage){
+		); 
+	if (  readBytes != sizeOfPage){
+		free(leftPointer);
 		return 1;
 	}
 	for(index = 0; index < sizeOfPage; ++index, buffer += 1, physicalAddress +=1){
@@ -72,6 +76,7 @@ static int loadVirtualPageToPhysicalMemory( size_t virtualPageIndex, PhysicalAdd
 	memoryManager.pages[virtualPageIndex].isModefied = false;
 	memoryManager.pages[virtualPageIndex].isPresent = true;
 	memoryManager.pages[virtualPageIndex].physicalAddress = pagePhysicalAddress;
+	free(leftPointer);
 	return 0;
 }
 
@@ -245,7 +250,7 @@ static int _fileInit( size_t n, size_t szPage ){
 	 if( memoryManager.pageFile){
 		 fclose(memoryManager.pageFile);
 	 }
-	 if( fopen_s( &(memoryManager.pageFile), "pageFile", "wb") == 0 &&
+	 if( fopen_s( &(memoryManager.pageFile), "pageFile", "w+b") == 0 &&
 		 buffer != NULL){
 			if ( fwrite(buffer, sizeof(char), n*szPage, memoryManager.pageFile) == n*szPage){
 			fflush(memoryManager.pageFile);
@@ -255,7 +260,7 @@ static int _fileInit( size_t n, size_t szPage ){
 			memoryManager.virtualAddressSize = n*szPage;
 			memoryManager.replacedPageNumber = 0;
 			free(buffer);
-			//printf("FinishFileINIT\n");
+			printf("FinishFileINIT\n");
 			return 0;
 		}
 	 }
