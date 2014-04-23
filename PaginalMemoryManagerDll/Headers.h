@@ -91,6 +91,11 @@ typedef struct {
 
 
   MemoryManager memoryManager;
+
+  void readByteFromVirtualSpace( VirtualAddress virtualAddress, PhysicalAddress buffer);
+
+  void writeByteToVirtualSpace( VirtualAddress virtualAddress, PhysicalAddress buffer);
+
 /*
 
 int _read (VA ptr, void* pBuffer, size_t szBuffer);

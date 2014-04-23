@@ -8,11 +8,11 @@
  ///// PAGINAL MEMORY
  /////
 
- static void readByteFromVirtualSpace( VirtualAddress virtualAddress, PhysicalAddress buffer){
+ void readByteFromVirtualSpace( VirtualAddress virtualAddress, PhysicalAddress buffer){
  
  }
 
- static void writeByteToVirtualSpace( VirtualAddress virtualAddress, PhysicalAddress buffer){
+ void writeByteToVirtualSpace( VirtualAddress virtualAddress, PhysicalAddress buffer){
  
  }
 
