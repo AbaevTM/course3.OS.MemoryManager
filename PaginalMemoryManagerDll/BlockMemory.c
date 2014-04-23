@@ -101,10 +101,26 @@ int _free (VirtualAddress ptr){
 
 int _read (VirtualAddress ptr, void* pBuffer, size_t szBuffer){
 	MemoryBlock * blockToRead = getBlock(ptr);
-
+	int i = 0;
 	printf("read\n");
-
-	return 0;
+	if(pBuffer == NULL || szBuffer == 0){
+		return -1;
+	}
+	if(!blockToRead || blockToRead->blockSize < szBuffer ){
+		return -2;
+	}
+	else {
+		char * resultBuffer = (char*) pBuffer;
+		char * tempBuffer = (char*)calloc(1, sizeof(char));
+		for(i; i < szBuffer; ++i){
+			readByteFromVirtualSpace(ptr, tempBuffer);
+			*resultBuffer = *tempBuffer;
+			++ptr;
+			++resultBuffer;
+		}
+		return 0;
+	}
+	return 1;
 }
 
 int _write (VirtualAddress ptr, void* pBuffer, size_t szBuffer){
