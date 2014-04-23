@@ -106,7 +106,7 @@ int _read (VirtualAddress ptr, void* pBuffer, size_t szBuffer){
 	if(pBuffer == NULL || szBuffer == 0){
 		return -1;
 	}
-	if(!blockToRead || blockToRead->blockSize < szBuffer ){
+	if(!blockToRead || blockToRead->blockSize < szBuffer || blockToRead->isFree){
 		return -2;
 	}
 	else {
@@ -131,7 +131,7 @@ int _write (VirtualAddress ptr, void* pBuffer, size_t szBuffer){
 	if(pBuffer == NULL || szBuffer == 0){
 		return -1;
 	}
-	if(!writableBlock || writableBlock->blockSize < szBuffer){
+	if(!writableBlock || writableBlock->blockSize < szBuffer || writableBlock->isFree){
 		return -2;
 	} 
 	else{
