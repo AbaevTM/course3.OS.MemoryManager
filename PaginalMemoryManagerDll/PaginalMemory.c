@@ -12,7 +12,7 @@ static int saveVirtualPageFromPhysicalMemory( size_t virtualPageIndex, PhysicalA
 	size_t sizeOfPage = memoryManager.sizeOfPage;
 	size_t fileShift = sizeOfPage * virtualPageIndex;
 	PhysicalAddress pagePhysicalAddress = physicalAddress;
-	fseek(memoryManager.pageFile,fileShift,SEEK_CUR);
+	fseek(memoryManager.pageFile,fileShift,SEEK_SET);
 	if ( fwrite(physicalAddress,
 		sizeof(char),
 		sizeOfPage,
@@ -59,7 +59,7 @@ static int loadVirtualPageToPhysicalMemory( size_t virtualPageIndex, PhysicalAdd
 	if( !buffer ){
 		return 1;
 	}
-	fseek(memoryManager.pageFile,fileShift,SEEK_CUR);
+	fseek(memoryManager.pageFile,fileShift,SEEK_SET);
 	readBytes = fread_s(buffer,
 		sizeOfPage,
 		sizeof(char),
@@ -82,9 +82,9 @@ static int loadVirtualPageToPhysicalMemory( size_t virtualPageIndex, PhysicalAdd
 
  void readByteFromVirtualSpace( VirtualAddress virtualAddress, PhysicalAddress buffer){
 	 PhysicalAddress physicalAddress;
-	 size_t virtualPageNumber = (size_t)(virtualAddress) >> ( 32 - memoryManager.addressOffset - memoryManager.pageAddressOffset);
-	 size_t addressShift = ((size_t)(virtualAddress) << ( 32 - memoryManager.addressOffset - memoryManager.pageAddressOffset)) >>
-			( 32 - memoryManager.addressOffset - memoryManager.pageAddressOffset );
+	 size_t virtualPageNumber = (size_t)(virtualAddress) >> ( 31 - memoryManager.addressOffset - memoryManager.pageAddressOffset);
+	 size_t addressShift = ((size_t)(virtualAddress) << ( 1 + memoryManager.addressOffset + memoryManager.pageAddressOffset)) >>
+			( 1 + memoryManager.addressOffset + memoryManager.pageAddressOffset);
 	 if( ! memoryManager.pages[virtualPageNumber].isPresent){
 		 PhysicalAddress physicalAddressToBeReplaced;
 		 findNextPageToBeReplaced();
@@ -103,9 +103,9 @@ static int loadVirtualPageToPhysicalMemory( size_t virtualPageIndex, PhysicalAdd
 
  void writeByteToVirtualSpace( VirtualAddress virtualAddress, PhysicalAddress buffer){
 	 PhysicalAddress physicalAddress;
-	 size_t virtualPageNumber = (size_t)(virtualAddress) >> ( 32 - memoryManager.addressOffset - memoryManager.pageAddressOffset);
-	 size_t addressShift = ((size_t)(virtualAddress) << ( 32 - memoryManager.addressOffset - memoryManager.pageAddressOffset)) >>
-			( 32 - memoryManager.addressOffset - memoryManager.pageAddressOffset);
+	 size_t virtualPageNumber = (size_t)(virtualAddress) >> ( 31 - memoryManager.addressOffset - memoryManager.pageAddressOffset);
+	  size_t addressShift = ((size_t)(virtualAddress) << ( 1 + memoryManager.addressOffset + memoryManager.pageAddressOffset)) >>
+			( 1 + memoryManager.addressOffset + memoryManager.pageAddressOffset);
 	 if( ! memoryManager.pages[virtualPageNumber].isPresent ){
 		 PhysicalAddress physicalAddressToBeReplaced;
 		 findNextPageToBeReplaced();
@@ -130,7 +130,7 @@ static int loadVirtualPageToPhysicalMemory( size_t virtualPageIndex, PhysicalAdd
 		do{
 			temp = currentBlock;
 			currentBlock = currentBlock->next;
-			free(currentBlock);
+			free(temp);
 		} while( currentBlock);
 		memoryManager.firstMemoryBlock = NULL;
 	 }
@@ -209,12 +209,14 @@ static int loadVirtualPageToPhysicalMemory( size_t virtualPageIndex, PhysicalAdd
  static void deletePhysicalMemory(){
 	 if(memoryManager.physicalMemoryBegin != NULL){
 		 free(memoryManager.physicalMemoryBegin);
+		 memoryManager.physicalMemoryBegin = NULL;
 	 }
  }
 
  static void deletePages(){
 	 if( memoryManager.pages){
 		 free (memoryManager.pages);
+		 memoryManager.pages = NULL;
 	 }
  }
 

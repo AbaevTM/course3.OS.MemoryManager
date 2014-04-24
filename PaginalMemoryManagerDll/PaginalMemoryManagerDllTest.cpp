@@ -51,7 +51,7 @@ void case2(){
 	if(_init(3, 3) == -1){
 		printf("%s", "Wrong parametrs\n");
 	}
-	if(!_init(3, 1024)) {
+	if(!_init(2, 2)) {
 		printf("%s", "Second init. OK\n");
 	}
 }
@@ -79,8 +79,8 @@ void case4(){
 }
 
 void case5(){
-	int pageSize = 1024;
-	int count = 3;
+	int pageSize = 1<<29;
+	int count = 1;
 	int memorySize = pageSize * count;
 	_init(count, pageSize);
 	
