@@ -1,9 +1,9 @@
 
 #include <stdio.h>
-#ifdef C_PLUS_PLUS 
-#define EXTERN extern "C"
+#ifdef DLL_EXPORT
+#define EXTERN extern  __declspec(dllexport)
 #else
-#define EXTERN extern
+#define EXTERN extern "C" __declspec(dllimport)
 #endif
 
 

@@ -262,7 +262,7 @@ static int _fileInit( size_t n, size_t szPage ){
 			memoryManager.virtualAddressSize = n*szPage;
 			memoryManager.replacedPageNumber = 0;
 			free(buffer);
-			printf("FinishFileINIT\n");
+			//printf("FinishFileINIT\n");
 			return 0;
 		}
 	 }

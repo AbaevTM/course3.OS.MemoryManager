@@ -50,7 +50,7 @@ int _malloc (VirtualAddress * ptr, size_t szBlock){
 	MemoryBlock * freeBlock;
 	MemoryBlock * newBlock;
 	VirtualAddress adress;
-	printf("malloc\n");
+	//printf("malloc\n");
 	if(!szBlock){
 		return -1;
 	}
@@ -82,7 +82,7 @@ int _malloc (VirtualAddress * ptr, size_t szBlock){
 int _free (VirtualAddress ptr){
 	MemoryBlock * deletedBlock;
 	MemoryBlock *temp;
-	printf("free\n");
+	//printf("free\n");
 	deletedBlock = getBlock(ptr);		
 	if(!deletedBlock || deletedBlock->isFree){
 		return -1;	 
@@ -102,7 +102,7 @@ int _free (VirtualAddress ptr){
 int _read (VirtualAddress ptr, void* pBuffer, size_t szBuffer){
 	MemoryBlock * blockToRead = getBlock(ptr);
 	int i = 0;
-	printf("read\n");
+	//printf("read\n");
 	if(pBuffer == NULL || szBuffer == 0){
 		return -1;
 	}
@@ -127,7 +127,7 @@ int _write (VirtualAddress ptr, void* pBuffer, size_t szBuffer){
 	MemoryBlock * writableBlock = getBlock(ptr);
 	char* tempBuffer = (char*) pBuffer;
 	int i = 0;
-	printf("write\n");
+	//printf("write\n");
 	if(pBuffer == NULL || szBuffer == 0){
 		return -1;
 	}
